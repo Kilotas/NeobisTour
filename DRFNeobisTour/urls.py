@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from myapp.views import TourListCreateAPIView, TourCategoryListCreateAPIView, ReviewListCreateAPIView, BookingListCreateAPIView, UserViewSet
+from myapp.views import TourListCreateAPIView, TourCategoryListCreateAPIView, ReviewListCreateAPIView, BookingListCreateAPIView, UserViewSet, TourDetailAPIView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -26,6 +26,7 @@ router.register(r'users', UserViewSet, basename='user')
 urlpatterns = [
     path('admin/', admin.site.urls),
 #    path('', include("myapp.urls")),
+    path('api/tours/<int:pk>/', TourDetailAPIView.as_view(), name='tour-detail'),
     path("api/schema/", SpectacularAPIView.as_view(), name='schema'),  # Moved this line up
     path("api/docs/", SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),  # Moved this line up
     path('api/tours/', TourListCreateAPIView.as_view(), name='tour-list-create'),

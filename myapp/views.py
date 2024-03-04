@@ -20,6 +20,47 @@ from drf_spectacular.utils import extend_schema
 from .models import Tour
 from .serializers import TourSerializer
 
+class TourDetailAPIView(APIView):
+    @extend_schema(
+        description="Get a specific tour by id",
+        responses={200: TourSerializer()},
+    )
+    def get(self, request, pk):
+        try:
+            tour = Tour.objects.get(pk=pk)
+            serializer = TourSerializer(tour)
+            return Response(serializer.data)
+        except Tour.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @extend_schema(
+        description="Update details of a specific tour by id",
+        request=TourSerializer,
+        responses={200: TourSerializer()},
+    )
+    def put(self, request, pk):
+        try:
+            tour = Tour.objects.get(pk=pk)
+            serializer = TourSerializer(tour, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Tour.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @extend_schema(
+        description="Delete a specific tour by id",
+        responses={204: None},
+    )
+    def delete(self, request, pk):
+        try:
+            tour = Tour.objects.get(pk=pk)
+            tour.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Tour.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
 class TourListCreateAPIView(APIView):
 
     @extend_schema(
